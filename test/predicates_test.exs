@@ -47,4 +47,8 @@ defmodule PredicatesTest do
     assert false == union.("A")
     assert false == union.("a")
   end
+
+  test "identity element" do
+    refute "what is an identity element to my monoid???"
+  end
 end
