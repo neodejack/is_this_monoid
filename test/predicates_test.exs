@@ -27,7 +27,7 @@ defmodule PredicatesTest do
 
     assert true ==
              base_predicate()
-             |> then(fn base -> fold([(&uppercase?/1) | base], &Enum.any?/2) end)
+             |> then(fn base -> fold([&uppercase?/1, base], &Enum.any?/2) end)
              |> then(& &1.("A"))
   end
 
@@ -42,10 +42,10 @@ defmodule PredicatesTest do
     assert true == either_upper_or_digit.("A")
     assert false == either_upper_or_digit.("a")
 
-    union = fold([either_lower_or_digit, either_upper_or_digit], &Enum.all?/2)
-    assert true == union.("7")
-    assert false == union.("A")
-    assert false == union.("a")
+    intersect = fold([either_lower_or_digit, either_upper_or_digit], &Enum.all?/2)
+    assert true == intersect.("7")
+    assert false == intersect.("A")
+    assert false == intersect.("a")
   end
 
   test "identity element" do
