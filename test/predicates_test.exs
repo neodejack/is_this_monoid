@@ -1,9 +1,8 @@
 defmodule PredicatesTest do
   use ExUnit.Case
   import Predicates
-  doctest Predicates
 
-  def base_predicate() do
+  defp base_predicate() do
     fold([&lowercase?/1, &digit?/1], &Enum.any?/2)
   end
 
@@ -30,5 +29,22 @@ defmodule PredicatesTest do
              base_predicate()
              |> then(fn base -> fold([(&uppercase?/1) | base], &Enum.any?/2) end)
              |> then(& &1.("A"))
+  end
+
+  test "composing predicates with different enum_func" do
+    either_lower_or_digit = fold([&lowercase?/1, &digit?/1], &Enum.any?/2)
+    assert true == either_lower_or_digit.("6")
+    assert true == either_lower_or_digit.("a")
+    assert false == either_lower_or_digit.("A")
+
+    either_upper_or_digit = fold([&uppercase?/1, &digit?/1], &Enum.any?/2)
+    assert true == either_upper_or_digit.("6")
+    assert true == either_upper_or_digit.("A")
+    assert false == either_upper_or_digit.("a")
+
+    union = fold([either_lower_or_digit, either_upper_or_digit], &Enum.all?/2)
+    assert true == union.("7")
+    assert false == union.("A")
+    assert false == union.("a")
   end
 end
